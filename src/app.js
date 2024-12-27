@@ -1,6 +1,7 @@
 const express=require("express")
 
 const app= express();
+const {adminAuth}= require("./middlewares/auth")
 
 //ROUTES
 
@@ -35,45 +36,102 @@ const app= express();
 
 //ROUTE HANDLERS & MIDDLEWARES
 
-app.use(
-    "/user",
+// app.use(
+//     "/user",
 
-    (req,res,next)=>{
-        console.log("Handling Route handler 1")
-        // res.send("Response 1"),
-    next()
-    },
+//     (req,res,next)=>{
+//         console.log("Handling Route handler 1")
+//         // res.send("Response 1"),
+//     next()
+//     },
 
     
- [ (req,res,next)=>{
-        console.log("Handling Route handler 2")
-        // res.send("Response 2"),
-        next()
-    },
+//  [ (req,res,next)=>{
+//         console.log("Handling Route handler 2")
+//         // res.send("Response 2"),
+//         next()
+//     },
 
-    (req,res,next)=>{
-        console.log("Handling Route handler 3")
-        res.send("Response 3"),
-        next()
-    }],
+//     (req,res,next)=>{
+//         console.log("Handling Route handler 3")
+//         res.send("Response 3"),
+//         next()
+//     }],
     
-    (req,res,next)=>{
-        console.log("Handling Route handler 4")
-        // next()
+//     (req,res,next)=>{
+//         console.log("Handling Route handler 4")
+//         // next()
       
-    }
-    
+//     }
+//    )
 
-   )
 
-//We can write this route handle as any of them
+//USE OF MIDDLEWARES
+//  app.get(
+//     "/admin/getAllData",
+//     (req,res,next)=>{
+        
+//         //Logic to check if request is authorized
+//         const token="xyz";
+//         const isAuthorized =token=="zyz"
+//         if(isAuthorized){
+//             res.send("All Data Sent")
+//         }
+//         else {
+//             res.status(401).send("Unauthorized Request")
+//         }
+
+//  })
+
+
+//  app.get(
+//     "/admin/deleteUser",
+//     (req,res,next)=>{
+
+//         //Logic to check if request is authorized
+//         const token="xyz";
+//         const isAuthorized =token=="zyz"
+//         if(isAuthorized){
+//             res.send("User Deleted")
+//         }
+//         else {
+//             res.status(401).send("Unauthorized Request")
+//         }
+
+//  })
+
+
+
+
 /**
- * app.use("/user",RouteHandler1,RouteHandler2,RouteHandler3,RouteHandler4)
- * app.use("/user", [RouteHandler1,RouteHandler2,RouteHandler3,RouteHandler4])
- * app.use("/user", [RouteHandler1],RouteHandler2,RouteHandler3,RouteHandler4)
- * app.use("/user", [RouteHandler1,RouteHandler2],RouteHandler3,RouteHandler4)
- * app.use("/user", RouteHandler1,[RouteHandler2,RouteHandler3,RouteHandler4])
+ * We are implementing logic of admin again and again that is where middleware comes into picture. 
+ * 
+ * 
+ * Generally we use - app.use to write middleware so that all the request coming to a particular routes is handled by it first then will move to next handler ,
+ * 
+ * 
+ * what we can do is - first we will write the Auth logic then if user is not authorized then throw error from there itseld and if admin is authorized then
+ * move to using next()
  */
+
+
+
+
+app.use("/admin",
+    adminAuth)
+
+app.get("/admin/getAllData",
+(req,res)=>{
+  res.send("All Data Sent")  
+})
+
+app.delete("/admin/deleteUser",
+    (req,res)=>{
+      res.send("User Deleted")  
+    })
+
+
+
 
 
 
@@ -85,14 +143,3 @@ app.listen(2000,()=>{
 
 
 
-/**
- * 
- * GET /users: It will go through all the app.xxx("matching route") functions until it reaches the function that sends the response back. 
-        The function that sends the response is called the Request Handler.
-        All the functions it passes through along the way are called Middlewares.
- * 
- * 
- *  Whenever you make an API call , it goes through middleware chain and finally it goes to Request Handler (The function which is sending response back)
- * 
- * The job of express js is - to take request and send response back
- */
