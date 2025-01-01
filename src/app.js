@@ -1,8 +1,33 @@
 const express = require("express");
 // require("./config/database")
 const connectDB=require("./config/database")
-
 const app = express();
+const User=require("./models/user")
+
+//API creation for signup 
+
+app.post("/signup",async (req,res)=>{
+    const userObj= {
+        firstName:"Akshay",
+        lastName:"Kumar",
+        emailId:"akshay@kumar.com",
+        password:"akshay@123"
+    }
+
+//Creating new instance of user model
+    const user= new User(userObj);
+
+    //user.save will return a promise therefor we have to use await since it is an async function
+    try 
+    {
+        await user.save ();
+        res.send("User added successfully")
+    }
+catch(err){
+  res.status(400).send("Error saving the user: " +err.message)
+}
+})
+
 
 
 connectDB()
