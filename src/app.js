@@ -16,7 +16,7 @@ app.post("/signup",async (req,res)=>{
 //Creating new instance of user model
 const user= new User(req.body);
 
-//user.save will return a promise therefor we have to use await since it is an async function
+//user.save will return a promise therefore we have to use await since it is an async function
 try
 {
     await user.save ();
@@ -25,6 +25,47 @@ try
 catch(err){
 res.status(400).send("Error saving the user: " +err.message)
 }
+})
+
+
+
+app.get("/user",async (req,res)=>{
+
+    //Suppose we have to find a user by an emailId
+
+    const userEmail=req.body.emailId;
+
+    try{
+        const user=await User.find({emailId:userEmail})
+        if(user.length==0){
+            res.status(404).send("User Not Found")
+        }
+        else{
+        res.send(user)
+        }
+    }
+    catch(err){
+
+        res.status(400).send("Something went wrong")
+
+    }
+
+})
+
+
+
+//Feed API- to get all the users from the database.
+app.get("/feed", async(req,res)=>{
+
+    try{
+
+        const users=await User.find({});
+        res.send(users)
+    }
+    catch(err){
+        res.status(400).send("Something went wrong")
+    }
+
 })
 
 /**
