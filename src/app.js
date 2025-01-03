@@ -41,10 +41,10 @@ app.get("/user", async (req, res) => {
 });
 
 app.delete("/delete", async (req, res) => {
-
+const userId=req.body.userId
 
     try{
-        const UserId = await User.findByIdAndDelete({_id})
+        const user = await User.findByIdAndDelete({_id:userId})
         res.send("User Deleted Successfully")
     }
     catch(err){
@@ -62,6 +62,26 @@ app.get("/feed", async (req, res) => {
     res.status(400).send("Something went wrong");
   }
 });
+
+//Patch API
+
+
+app.patch("/user",async (req,res)=>{
+ 
+
+  const userId= req.body.userId;
+  const data=req.body;
+
+  try{
+  // const updatedUser=  await User.findByIdAndUpdate(userId,{firstName:"Hardik"})
+  const updatedUser=  await User.findByIdAndUpdate({_id:userId},data)
+  console.log(updatedUser)
+   res.send("User updated Successfully")
+  }
+  catch(err){
+    res.status(400).send("Something went wrong");
+  }
+})
 
 /**
  * app.post("/signup",async (req,res)=>{
