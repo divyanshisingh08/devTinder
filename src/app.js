@@ -64,8 +64,6 @@ app.get("/feed", async (req, res) => {
 });
 
 //Patch API
-
-
 app.patch("/user",async (req,res)=>{
  
 
