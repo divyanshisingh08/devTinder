@@ -34,6 +34,9 @@ const userSchema= new mongoose.Schema({
                 throw new Error("Gender data not valid")
             }
         }
+
+        //By default this validate function will run only on creation of a new user not while updating the old user.
+        // We have to set the runValidators as true in API Options .
     },
     photoURL:{
         type: String,
