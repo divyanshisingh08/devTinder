@@ -64,13 +64,34 @@ app.get("/feed", async (req, res) => {
 });
 
 //Patch API
-app.patch("/user",async (req,res)=>{
+app.patch("/user/:userId",async (req,res)=>{
  
 
-  const userId= req.body.userId;
+  // const userId= req.body.userId;
+   const userId= req.params?.userId;  // to get the user from URL whose info needs to be updated
   const data=req.body;
 
   try{
+
+    const ALLOWED_UPDATES=[
+      "userId",
+      "photoURL",
+      "about",
+      "skills",
+      "age",
+
+    ];
+
+    const isUpdateAllowed=Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));  
+
+    if(!isUpdateAllowed){
+      throw new Error ("Update Not Allowed")
+    }
+
+
+    if(data?.skills.length>10){
+      throw new Error ("Skills Cannot be more than 10")
+    }
   // const updatedUser=  await User.findByIdAndUpdate(userId,{firstName:"Hardik"})
   const updatedUser=  await User.findByIdAndUpdate({_id:userId},data,{
     runValidators:true,
