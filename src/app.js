@@ -29,6 +29,7 @@ app.use(express.json());
 
 //2 - ep 22
 app.post("/signup", async (req, res) => {
+  try {
  // whenever a user signs up first validate the data
  validateSignUpData(req)
 
@@ -45,13 +46,37 @@ const EncryptedPassword= await bcrypt.hash(password, 10)
   });
 
   //user.save will return a promise therefore we have to use await since it is an async function
-  try {
+
     await user.save();
     res.send("User added successfully");
   } catch (err) {
     res.status(400).send("Error saving the user: " + err.message);
   }
 });
+
+app.post("/login",async (req,res)=>{
+  try{ 
+    const {emailId,password}=req.body;
+
+    //First check if emailId is present in the database or not
+    const user= await User.findOne({emailId:emailId})
+    if(!user){
+      throw new Error("Invalid Credentials 1")
+    }
+
+    const isPasswordValid= await bcrypt.compare(password, user.password)
+
+    if(isPasswordValid){
+      res.send("Login Successfull")
+    }
+    else{
+      throw new Error("Invalid Credentials 2")
+    }
+  }
+  catch(err){
+    res.status(400).send("Something went wrong"+ err);
+  }
+})
 
 app.get("/user", async (req, res) => {
   //Suppose we have to find a user by an emailId
