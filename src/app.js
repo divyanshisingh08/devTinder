@@ -3,16 +3,46 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+const {validateSignUpData}=require("./utils/validation")
+const bcrypt = require('bcrypt');
 
 //Middleware to read a JSON file.
 app.use(express.json());
 //API creation for signup
+//1
+// app.post("/signup", async (req, res) => {
+//   console.log(req.body);
 
+//   //Creating new instance of user model
+//   const user = new User(req.body);
+
+//   //user.save will return a promise therefore we have to use await since it is an async function
+//   try {
+//     await user.save();
+//     res.send("User added successfully");
+//   } catch (err) {
+//     res.status(400).send("Error saving the user: " + err.message);
+//   }
+// });
+
+
+
+//2 - ep 22
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
+ // whenever a user signs up first validate the data
+ validateSignUpData(req)
 
-  //Creating new instance of user model
-  const user = new User(req.body);
+//  Second Encrypt the password
+
+const {firstName,lastName,emailId,password}=req.body;
+
+const EncryptedPassword= await bcrypt.hash(password, 10)
+
+
+  //third Creating new instance of user model
+  const user = new User({
+    firstName,lastName,emailId,password:EncryptedPassword
+  });
 
   //user.save will return a promise therefore we have to use await since it is an async function
   try {
