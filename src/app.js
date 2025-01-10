@@ -73,11 +73,11 @@ app.post("/login",async (req,res)=>{
 
       //create a JWT Token
 //const token= await jwt.sign(payload, privatekey)
-      const token= await jwt.sign({_id:user_id}, "DevTinder@790")
+      const token= await jwt.sign({_id:user._id}, "DevTinder@790")
       
 
       //Add the token to the cookie and send response back to the user
-      res.cookie("Token", token)
+      res.cookie("token", token)
       res.send("Login Successfull")
     }
     else{
@@ -90,10 +90,8 @@ app.post("/login",async (req,res)=>{
 })
 
 
-app.get("/profile", (req,res)=>{
+app.get("/profile", async (req,res)=>{
 const cookies= req.cookies;
-
-
 
 // console.log(cookies)  - undefined
 // to read a cookie we needa middleware- cookie-parser 
@@ -101,8 +99,14 @@ console.log(cookies)
 
 
 //1. Extract the token from cookie
+const {token}=cookies;
+
+console.log(token)
 
 //2. Validate the token 
+const decodedMessage= await jwt.verify(token,"DevTinder@790");
+
+console.log(decodedMessage)
 
 //3. send the response (data) to the user
 
