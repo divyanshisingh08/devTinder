@@ -5,9 +5,12 @@ const app = express();
 const User = require("./models/user");
 const {validateSignUpData}=require("./utils/validation")
 const bcrypt = require('bcrypt');
+const cookieParser=require("cookie-parser")
+const jwt=require("jsonwebtoken")
 
 //Middleware to read a JSON file.
 app.use(express.json());
+app.use(cookieParser());
 //API creation for signup
 //1
 // app.post("/signup", async (req, res) => {
@@ -67,6 +70,14 @@ app.post("/login",async (req,res)=>{
     const isPasswordValid= await bcrypt.compare(password, user.password)
 
     if(isPasswordValid){
+
+      //create a JWT Token
+//const token= await jwt.sign(payload, privatekey)
+      const token= await jwt.sign({_id:user_id}, "DevTinder@790")
+      
+
+      //Add the token to the cookie and send response back to the user
+      res.cookie("Token", token)
       res.send("Login Successfull")
     }
     else{
@@ -77,6 +88,31 @@ app.post("/login",async (req,res)=>{
     res.status(400).send("Something went wrong"+ err);
   }
 })
+
+
+app.get("/profile", (req,res)=>{
+const cookies= req.cookies;
+
+
+
+// console.log(cookies)  - undefined
+// to read a cookie we needa middleware- cookie-parser 
+console.log(cookies) 
+
+
+//1. Extract the token from cookie
+
+//2. Validate the token 
+
+//3. send the response (data) to the user
+
+
+
+res.send("Reading Cookies")
+
+})
+
+
 
 app.get("/user", async (req, res) => {
   //Suppose we have to find a user by an emailId
