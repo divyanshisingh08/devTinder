@@ -33,6 +33,13 @@ requestRouter.post("/request/send/:status/:touserId", userAuth ,async (req,res)=
       status
     })
 
+    /*corner cases for API
+    1. Status can be only - interested , ignored
+    2. Valid user Id should be there
+    3. Check if connection is already there
+    4. user should not be able to send connection to themselves
+    */
+
     const data= await connectionRequest.save();
 
     req.json({
