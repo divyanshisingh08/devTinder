@@ -3,6 +3,7 @@ const profileRouter=express.Router();
 const {userAuth} = require("../middlewares/auth");
 const User = require("../models/user");
 const { validateEditProfileData } = require("../utils/validation");
+const bcrypt = require('bcrypt');
 
 
 profileRouter.get("/profile",userAuth, async (req,res)=>{
@@ -33,7 +34,7 @@ const LoggedInUser=req.user;
 console.log(LoggedInUser)
 
 Object.keys(req.body).forEach((key)=>(LoggedInUser[key]=req.body[key]))
-
+await LoggedInUser.save();
 res.send("Profile Updated Successfully")
 
   }
@@ -41,8 +42,26 @@ catch(err){
   res.status(400).send("Something went wrong"+ err.message)
 }
 
-
 })
+
+
+profileRouter.post("/profile/password",userAuth,async (req,res)=>{
+  try{
+    const user=req.user;
+    const {newPassword}=req.body;
+   
+    const hashedPassword=await bcrypt.hash(newPassword, 10)
+    user.password = hashedPassword;
+    res.send("user-password")
+  }
+  catch(err){
+    res.status(400).send("Something went wrong: "+ err.message)
+  }
+})
+
+
+
+
 
 
 

@@ -1,8 +1,7 @@
 const express=require("express")
 const requestRouter=express.Router();
 const {userAuth} = require("../middlewares/auth");
-const { connectionRequestSchema } = require("../models/connectionRequest");
-
+const { connectionRequestModel } = require("../models/connectionRequest");
 
 // requestRouter.post("/sendConnectionRequest", userAuth ,async (req,res)=>{
 //     try{
@@ -18,16 +17,17 @@ const { connectionRequestSchema } = require("../models/connectionRequest");
 
 
 
-requestRouter.post("/request/send/:status/:touserId", userAuth ,async (req,res)=>{
+requestRouter.post("/request/send/:status/:toUserId", userAuth ,async (req,res)=>{
   try{
   
     const fromUserId=req.user._id;
     const toUserId=req.params.toUserId;
     const status=req.params.status;
 
+
     //new instance of connectionRequest
 
-    const connectionRequest=new connectionRequest({
+    const connectionRequest=new connectionRequestModel({
       fromUserId,
       toUserId,
       status
@@ -43,8 +43,7 @@ requestRouter.post("/request/send/:status/:touserId", userAuth ,async (req,res)=
     const data= await connectionRequest.save();
 
     req.json({
-      message: "Connection Request sent successfully",
-      data
+      message: "Connection Request sent successfully"
     })
 
   }

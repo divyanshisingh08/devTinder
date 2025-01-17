@@ -29,5 +29,5 @@ const connectionRequestSchema = new mongoose.Schema({
 const connectionRequestModel= new mongoose.model("ConnectionRequest", connectionRequestSchema)
 
 module.exports={
-    connectionRequestSchema
+    connectionRequestModel
 }
