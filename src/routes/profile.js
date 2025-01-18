@@ -6,6 +6,7 @@ const { validateEditProfileData } = require("../utils/validation");
 const bcrypt = require('bcrypt');
 
 
+
 profileRouter.get("/profile",userAuth, async (req,res)=>{
     try {
     
@@ -48,21 +49,24 @@ catch(err){
 profileRouter.post("/profile/password",userAuth,async (req,res)=>{
   try{
     const user=req.user;
-    const {newPassword}=req.body;
+    const {password,newPassword}=req.body;
+
+    //First check the old password , if it is the same
+
+    const isValid= await user.validatePassword(password)
    
+    if (!isValid) {
+      throw new Error ("Existing Password Invalid")
+    }
     const hashedPassword=await bcrypt.hash(newPassword, 10)
     user.password = hashedPassword;
-    res.send("user-password")
+    await user.save();
+    res.send("Password updated successfully.");
   }
   catch(err){
     res.status(400).send("Something went wrong: "+ err.message)
   }
 })
-
-
-
-
-
 
 
     module.exports=profileRouter;
