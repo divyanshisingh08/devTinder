@@ -14,6 +14,9 @@ const userSchema= new mongoose.Schema({
         type: String
     },
 
+    //If a field is unique then mongodb automatically creates index for it,
+    //  to explicitly set a index you can set index==true,
+    //  compound Index- when you use multiple field to index
     emailId: {
         type: String,
         required:true,
@@ -36,6 +39,7 @@ const userSchema= new mongoose.Schema({
             }
         }
     },
+
     age: {
         type: Number,
         min:18
