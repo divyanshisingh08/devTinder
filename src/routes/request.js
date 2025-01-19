@@ -95,15 +95,39 @@ const data= await connectionRequest.save();
 
 requestRouter.post("/request/review/:status/:requestId",userAuth,async(req,res)=>{
   try{
-    const user=req.user;
-    const fromUserId=req.user.userId;
-    const status= req.params.status; 
+    const LoggedInUser=req.user;
+    const {status,requestId}= req.params; 
      
     const allowedStatus=["accepted","rejected"];
     if(!allowedStatus.includes(status)){
       return res.status(400).json({message:" Invalid Status" + message})
      }
 
+     /*Now we will check if the:
+     1. the requestId of the request is already there in the ConnectionRequestModel (database) (it will be in form of ID)
+     2. if connection is there so the toUser in that request must be same as loggedIn user here
+     3. status should be interested then only loggedInUser will accept the request
+
+     */
+
+     const connectionRequest= await connectionRequestModel.findOne({
+      _id: requestId ,
+      toUserId: LoggedInUser._id,
+      status: "interested"
+     })
+
+     if(!connectionRequest){
+     return  res.status(400).json({message:"Connection Request Not Found"})
+     }
+
+     connectionRequest.status= status;
+
+     const data= await connectionRequest.save();
+
+     res.json({
+      message:"Connection Request " + status,
+      data
+     })
     
 
   }
