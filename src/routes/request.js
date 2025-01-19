@@ -93,4 +93,23 @@ const data= await connectionRequest.save();
 })
 
 
+requestRouter.post("/request/review/:status/:requestId",userAuth,async(req,res)=>{
+  try{
+    const user=req.user;
+    const fromUserId=req.user.userId;
+    const status= req.params.status; 
+     
+    const allowedStatus=["accepted","rejected"];
+    if(!allowedStatus.includes(status)){
+      return res.status(400).json({message:" Invalid Status" + message})
+     }
+
+    
+
+  }
+  catch(err){
+    res.status(400).send("Something went wrong "+ err.message)
+  }
+})
+
 module.exports=requestRouter;
