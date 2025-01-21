@@ -24,5 +24,5 @@
 
 
 -GET/connections
--GET/connections/received 
+-GET/user/requests/received
 -GET/feed

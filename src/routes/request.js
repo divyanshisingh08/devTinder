@@ -125,7 +125,7 @@ requestRouter.post("/request/review/:status/:requestId",userAuth,async(req,res)=
      const data= await connectionRequest.save();
 
      res.json({
-      message:"Connection Request " + status,
+      message:"Connection Request  " + status,
       data
      })
     
