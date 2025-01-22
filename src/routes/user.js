@@ -49,6 +49,21 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
           {fromUserId: loggedInUser._id,status:"accepted"}
           ]
         })
+        .populate("fromUserId","firstName lastName photoURL ")
+        .populate("toUserId","firstName lastName photoURL ")
+
+        //we don't need all the details , I want array of users not data about connections
+        const data= MyConnections.map((row)=>{
+            if(row.fromUserId.toString()===loggedInUser._id.toString()){
+                return row.toUserId
+            }
+          
+           return  row.fromUserId
+    })
+
+        res.json({
+            data
+        })
         
     } catch (error) {
         res.status(400).send("something went wrong "+ error.message)
