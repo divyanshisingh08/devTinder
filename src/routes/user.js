@@ -12,7 +12,10 @@ userRouter.get("/user/request/recieved",userAuth,async(req,res)=>{
         const connectionRequests= await connectionRequestModel.find({
             toUserId: loggedInUser._id,
             status: "interested"
-        }).populate("fromUserId",["firstName", "lastName"])
+        })
+        // .populate("fromUserId",["firstName", "lastName"])
+        .populate("fromUserId",["firstName lastName photURL skills age gender"])
+
 
 
         /* Now we have to save the data and get the details of the user liek firstname to know who has sent the request.
@@ -20,6 +23,9 @@ userRouter.get("/user/request/recieved",userAuth,async(req,res)=>{
         1. user.save() and loop over all userId to get the details of the user
 
         2. using ref to establish connection request between both tables and use populate 
+        - populate("fromUserId",["firstName", "lastName"]) : if the second paramater is not sent then it will send all the details like email password, created at etc
+        - Other way to populate the data is to send it in form of string instread of array
+        populate("fromUserId",["firstName lastName photURL skills age gender"])
         */
         req.json({
             message:" Here are users interested in you",
@@ -28,6 +34,24 @@ userRouter.get("/user/request/recieved",userAuth,async(req,res)=>{
     }
     catch(err){
         res.status(400).send("Something went wrong" + err.message)
+    }
+})
+
+
+userRouter.get("/user/connections",userAuth,async(req,res)=>{
+    try {
+
+        const loggedInUser=req.user;
+
+        const MyConnections=await connectionRequestModel.find({
+          $or:[
+          {toUserId: loggedInUser._id,status:"accepted"},
+          {fromUserId: loggedInUser._id,status:"accepted"}
+          ]
+        })
+        
+    } catch (error) {
+        res.status(400).send("something went wrong "+ error.message)
     }
 })
 
