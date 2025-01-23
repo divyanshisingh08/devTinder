@@ -70,7 +70,20 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
     }
 })
 
+userRouter.get("/user/feed",userAuth,async(req,res)=>{
+    try {
+        /*On home page user should see the profiles of all the other users except :
+        1. their own profile
+        2.his connections
+        3. who he has sent the request/received the request
+        4.
+        */
+        
+        
+    } catch (error) {
+        
+    }
+})
 
-module.exports={
+module.exports=
     userRouter
-}
