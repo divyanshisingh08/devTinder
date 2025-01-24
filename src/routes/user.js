@@ -78,6 +78,12 @@ userRouter.get("/user/feed",userAuth,async(req,res)=>{
         3. who he has sent the request/received the request
         4.
         */
+
+
+
+
+
+        const hideFromUser= new Set()
         
         
     } catch (error) {
