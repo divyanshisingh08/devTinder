@@ -1,6 +1,7 @@
 const express=require("express");
 const { userAuth } = require("../middlewares/auth");
 const { connectionRequestModel } = require("../models/connectionRequest");
+const User = require("../models/user");
 
 const userRouter=express.Router();
 
@@ -75,31 +76,37 @@ userRouter.get("/user/feed",userAuth,async(req,res)=>{
         /*On home page user should see the profiles of all the other users except :
         1. their own profile
         2.his connections
-        3. who he has sent the request/received the request
-        4.
+        3. already sent the request/received the request
+        4. ignored users
         */
 
-        const connectionRequests = await ConnectionRequest.find({
-            $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
-          }).select("fromUserId  toUserId");
-      
-          const hideUsersFromFeed = new Set();
-          connectionRequests.forEach((req) => {
-            hideUsersFromFeed.add(req.fromUserId.toString());
-            hideUsersFromFeed.add(req.toUserId.toString());
-          });
-      
-          const users = await User.find({
-            $and: [
-              { _id: { $nin: Array.from(hideUsersFromFeed) } },
-              { _id: { $ne: loggedInUser._id } },
-            ],
-          })
-        
+    const connectionRequests= await connectionRequestModel.find({
+        $or:[
+            {fromUserId: loggedInUser._id},
+            {toUserId:loggedInUser._id}
+        ]
+    })
+    .select("fromUserId  toUserId")
+    .populate("fromUserId"," firstName")
+    .populate("toUserId"," firstName")
+
+    const hideUsersFromFeed = new Set();
+    connectionRequests.forEach(req=>{
+        hideUsersFromFeed.add(req.fromUserId.toString())
+        hideUsersFromFeed.add(req.toUserId.toString())
+    })
+//Find all the users with id who are not present in  hideUsedFromFeedm array
+    const users= await User.find({
+      $and:[ { _id: {$nin: Array.from(hideUsersFromFeed)}},
+        { _id: {$ne: loggedInUser._id}}
+      ]
+    }).select("firstName lastName photURL skills age gender")
+
+    
     } catch (error) {
         
     }
 })
 
 module.exports=
-    userRouter
+    userRouter  
